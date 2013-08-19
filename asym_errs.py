@@ -103,7 +103,7 @@ class PiecewiseLinearModel:
             )
         )
 
-def total_cumulants(sigmas, model=PiecewiseLinearModel):
+def total_cumulants(sigmas, x0=0, model=PiecewiseLinearModel):
     """
     Calculates the total cumulants of the convolved distribution of
     asymmetric gaussians.
@@ -120,7 +120,7 @@ def total_cumulants(sigmas, model=PiecewiseLinearModel):
         gamma += _gamma
     return mu, v, gamma
 
-def solve_iteratively(mu, v, gamma, model=PiecewiseLinearModel):
+def solve_iteratively(mu, v, gamma, x0=0, model=PiecewiseLinearModel):
     """
     Iteratively solves the equations for S and D to find the sigma values corresponding
     to the total cumulants mu, v, gamma.
@@ -159,18 +159,35 @@ def solve_iteratively(mu, v, gamma, model=PiecewiseLinearModel):
         g_calc = model.Gamma(sig1, sig2, x0)
 
         #Calculate the shift in the mean
-        delta = x0 + mu - d_new/math.sqrt(2*math.pi)
+        delta = mu - d_new/math.sqrt(2*math.pi)
 
     return sig1, sig2, delta
 
+def add_errors(sigmas):
+    mu, v, gamma = total_cumulants(sigmas)
+    sig1, sig2, delta = solve_iteratively(mu, v, gamma)
+    return sig1, sig2, delta
+
 if __name__=="__main__":
+
     #Inputs
-    x0 = 0
     sigmas = [
 
         (1.5, 0.5),
         (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
+        (1.5, 0.5),
     ]
-    mu, v, gamma = total_cumulants(sigmas)
-    sig1, sig2, delta = solve_iteratively(mu, v, gamma)
-    print sig1, sig2, delta
+    r = add_errors(sigmas)
+    print r[0], r[1], r[2]
